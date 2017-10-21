@@ -1,0 +1,184 @@
+ mkdir dir-name:创建文件夹
+-------
+ git init <dir-name>:创建指定名称的文件夹为版本仓库，没有dir-name则直接指定当前所在的文件夹为仓库
+-------
+ 设置名字和Email地址
+ git config --global user.name "Your Name"
+ git config --global user.email "email@example.com"
+-------
+  配置级别：(1).local:版本级，针对当前版本  (2).system:针对当前系统 (3).global:针对当前电脑用户
+-------
+ ls:产看当前文件夹下的文件列表,仅显示文件名称
+ ls -lat:详细查看当前目录下的文件和文件夹目录，带有创建者信息和创建日期
+-------
+ cat readme.txt:查看某文件信息
+-------
+ git status:查看目前状态，所在分支和工作区，暂存区，HEAD之间的差异
+-------
+   (1)   git add file-name:将新建或者修改后的文件从工作区提交到暂存区(常用)
+   (2)   git add * git会自动把你当前目录所有修改过的文件添加
+   (3)   git add . Git会递归地将你执行命令时所在的目录中的所有文件添加上去，所以如果你将当前的工作目录作为参数，它就会追踪那儿的所有文件
+-------
+  git commit -m "提交描述": 将暂存区的所有待提交任务全部commit到当前分支下的HEAD  (在此之前，必须将修改的文件进行add)
+  git commit -a -m "提交描述" :不必对修改的文件事先进行add,可以直接commit   (不建议)
+-------
+  git status:查看当前版本库的状态，包括工作区的修改未add到暂存区(红色显示)或者暂存区有任务未commit到当前HEAD(绿色显示) 
+-------
+   git diff：           查看working tree(工作区)与index file(暂存区)的差别的。
+   git diff HEAD：      查看working tree和commit的差别的。
+   git diff --cached：  查看index file与commit(即HEAD指针代表的分支)的差别的。
+-------   
+   git checkout -- <file_name>:把<file_name>文件在工作区的修改全部撤销，这里有两种情况:
+   一种是<file_name>自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+   一种是<file_name>已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态。
+   总之，就是让这个文件回到最近一次git commit或git add时的状态。
+------- 
+  git checkout --<file_name>撤销工作区修改    详解:
+    对于文件 myfile.txt:
+    ① 修改后 未add（添加到暂存区） 需要撤销修改时：
+         git checkout -- myfile.txt 或 手动删除工作区修改
+         工作区 ： clean  暂存区： clean
+    ② 修改后 add了（未commit） 再次修改文件  要撤销第二次修改时：
+         git checkout -- myfile.txt (将暂存区恢复到工作区)
+         暂存区有第一次的修改需要commit
+    ③ 修改后 add了（未commit），需要撤销修改时：
+         git reset HEAD myfile.txt (将暂存区修改删除)
+         此时工作区的修改还未撤销
+         git checkout -- myfile.txt (撤销工作区修改)
+    ④ 修改后 add并commit了，需要撤销修改时：
+         git reset --hard HEAD^  (版本回退)**
+-------
+ git rm <file_name>:从版本库删除指定的文件(工作区的文件也没有了)，之后还需要commit   
+ git rm --cached <file_name>:仅仅从暂存区删除文件，工作区的文件还存在
+-------
+ git mv <old_file_name> <new_file_name>:对文件重命名 
+-------
+   git status -s:查看工作区，暂存区，HEAD之间的差异：
+   (1).第一列有绿色的M:暂存区和HEAD有差异，即暂存区有任务没有commit到HEAD
+   (2).第二列有红色的M:工作区和暂存区有差异，即工作区有修改未add到暂存区
+-------
+   git reset HEAD <file_name>:可以把暂存区指定文件对象的还未commit的修改撤销掉（unstage），重新放回工作区
+   git reset --hard HEAD^:返回上一次提交的版本
+   git reset --hard HEAD^^:返回上上次提交的版本
+   git reset --hard HEAD~100:返回上100次提交的版本
+   git reset --hard 3628164:根据指定的版本号，返回指定提交时的版本
+-------
+   git branch:查看当前分支,结果中以*为前缀表示HEAD所指向的当前分支
+-------
+   git checkout -b <branch_name>:创建并切换到新建分支,相当于以下两句:
+   (1)git branch <branch_name>:创建分支
+   (2)git checkout <branch_name>:切换到指定分支
+-------
+   git merge <branch_name>:将指定分支合并到当前的分支下
+-------
+   git merge --no-ff -m "merge with no-ff" <branch_name>:可以用普通模式而不是Fast forward模式合并，合并后的历史有分支，能看出来曾经做过合并，
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　Fast forward模式合并看不出来曾经做过合并，直接进行指针的跳动
+-------
+   git branch -d <branch_name>:删除指定分支
+   git branch -D <branch_name>:丢弃一个没有被合并过的分支，强行删除指定分支
+-------
+   一个场景:在dev分支下做了修改，但是需要重新修改文件，但是又不想直接checkout撤销修改，这时候可以使用git status命令保存当前状态
+   (这里有个注意点，就是在dev分支下做了修改后，master分支下也是会被修改的，这时候被修改的文件相当于处于一个游离的状态)
+   git status之后，就会回到修改之前的状态。
+　之后还可以使用git status pop命令再次切换到文件修改后的状态，即之前的游离状态
+-------
+   git log --graph --pretty=oneline --abbrev-commit:查看带有分支合并情况的提交记录
+   git log --pretty=raw --graph <commit_id>:查看某次提交的parent(可理解为父提交),是个链表形式(可以想象成目录树结构)
+　 git log --pretty=oneline :简单查看提交历史，只有提交的id和提交的描述信息
+   git reflog:查看命令历史，以便确定要回到未来的哪个版本
+   git log -1:显示最后一次提交信息
+-------
+  git remote add origin git@github.com:qzq2514/<Repository_name>.git:
+  　　1.SSH方法，需要在github上注册ssh key     作用:在本地某个仓库中运行，表示将本地此仓库与远程Repository_name仓库进行关联 
+      2.使用git协议，然后使用ssh密钥。这样可以省去每次都输密码。
+  git remote add origin https://github.com/qzq2514/<Repository_name>.git:
+  　　(https协议，每次pull, push都要输入密码)   作用:与上述SSH方法一致
+-------
+  git push -u origin <branch_name>:把当指定分支推送到远程,当远程库是空的，我们第一次推送指定分支时，加上了-u参数，Git不但会把本地的指定分支内
+　　容推送到远程新的指定分支，还会把本地的指定分支和远程的指定分支关联起来，在以后的推送或者拉取时就可以简化命令。
+　　此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改
+-------
+  git clone git@github.com:qzq2514/<Repository_name>.git:从指定用户克隆指定的仓库到本地，当你从远程仓库克隆时,实际上Git自动把本地的master分支
+                                                          和远程的master分支对应起来了，并且，远程仓库的默认名称是origin
+-------
+  git remote -v:查看远程库的信息
+-------
+  git checkout -b branch-name origin/<branch-name>:创建远程origin的指定分支到本地
+  　　若在本地创建和远程分支对应的分支,产生Cannot update paths and switch to branch 'dev' at the same time错误就：
+　先创建本地分支:git checkout -b branch-name
+  然后重置它的起始点:git reset --hard origin/branch-name
+-------
+   git pull <远程主机名> <远程分支名>:<本地分支名>
+   取回远程主机某个分支的更新，再与本地的指定分支合并,如果远程分支是与当前分支合并，则冒号后面的部分可以省略
+   本地发生冲突的文件在pull后由两部分构成，"====="上面是本地的文件原内容，下面是远程文件的内容，然后自己手动选择一部分以解决冲突
+-------
+   git branch --set-upstream <local_branch-name> origin/<far_branch-name>：建立本地指定分支和远程指定分支的关联
+-------
+  删除远程分支：
+  git branch -r -d origin/branch-name
+  不成功，发现只是删除的本地对该远程分支的track，正确的方法应该是这样：
+  git push origin :branch-name
+  冒号前面的空格不能少，原理是把一个空分支push到server上，相当于删除该分支。
+-------
+  git tag:查看所有标签
+  git tag <tagname>:默认为最新提交的commit打上标签
+　git tag <tagname> <commit id> :为指定的commit打上标签
+  git show <tagname>:查看指定标签的信息
+　git tag -a <tagname> -m "描述信息" <commit id>：创建带有说明的标签，用-a指定标签名，-m指定说明文字
+  git tag -s <tagname> -m "描述信息" <commit id>: 通过-s用私钥签名一个标签,签名采用PGP签名(必须首先安装gpg（GnuPG))
+  git tag -d <tagname>:删除本地指定标签
+　git push origin <tagname>：推送某个标签到远程
+　git push origin --tags：一次性将本地尚未推送到远程的标签全部推送到远程
+  删除远程标签：(1).先git tag -d <tagname>:删除本地标签　(2).再git push origin :refs/tags/<tagname>删除远程标签(相当于push一个空的tag到远程)
+-------
+   git config --global alias.<new_name> <old_name>:设置别名
+   (!!  git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+       后直接 ：git lg可以查看详细的提交信息)
+   删除别名：
+   (1). 直接删除.git/config文件下[alias]中的对应键值对配置，即可删除别名设置
+   (2). git config --global --unset alias.<bie_ming>
+-------
+    git stash:保存当前工作，方便之后直接从stash提取继续工作，类似于保存的功能
+    git stash list:查看之前被临时保存的工作，是一个栈的存储结构
+    git stash apply:恢复之前暂时保存的工作状态，但是恢复后，stash内容并不删除，你需要用git stash drop来删除
+    git stash pop:恢复暂时保存的工作状态的同时把stash内容也删了
+-------
+   查看本地计算机git用户名和邮箱
+   git config --global user.name 
+   git config --global user.email 
+-------
+   修改本地计算机git用户名和邮箱
+   git config --global user.name "username"
+   git config --global user.email "email"
+-------
+   查看本地仓库的秘钥步骤：
+   1. cd ~/.ssh      :进入本地计算机.ssh目录-秘钥保存目录
+   2. ls             :列出所有秘钥文件
+   关键是看有没有用 xxxx 和 xxxx.pub 来命名的一对文件，这个 xxxx 通常就是 id_dsa 或 id_rsa。
+   有 .pub 后缀的文件就是公钥，另一个文件则是密钥。假如没有这些文件，或者干脆连 .ssh 目录都没有，
+   可以用 ssh-keygen 来创建,创建的秘钥是属于系统的，不仅仅属于git,默认保存在　C:\Users\Administrator\.ssh下
+-------
+ ssh-keygen -t rsa -C "youremail@example.com":创建SSH Key,生成id_rsa和id_rsa.pub这两个文件,保存在　C:\Users\Administrator\.ssh下
+
+可能出现的问题:failed to push some refs to 'git@github.com:qzq2514/<Repository_name>.git'
+原因:原因是github中的README.md文件不在本地代码目录中
+解决步骤:1.git pull --rebase origin master   [注：pull=fetch+merge]
+         2.git push -u origin master
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
