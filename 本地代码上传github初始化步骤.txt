@@ -1,5 +1,5 @@
 1.配置用户名和邮件地址
-git config --global user.name "qzq"
+git config --global user.name "qzq2514"
 git config --global user.email "qzq2514@outlook.com"
 
 2.生成SSH密钥
