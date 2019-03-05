@@ -1,0 +1,9 @@
+github子目录克隆：
+Mac忘记shh密码后，可以用https方式克隆
+
+
+
+2019-3-6问题：
+git clone --recursive git@github.com:ZJULearning/pixel_link.git时,要输入ssh私钥的密码，如果忘记私钥密码，直接用：git clone --recursive https://github.com/ZJULearning/pixel_link.git
+其中--recursive表示递归创建项目需要的子模块(即其他github库)，那么这时候，pixel_link仓库可以被克隆下来，但是有个问题，就是其依赖的pylib库无法克隆，因为其还是使用的ssh方式，可以看见.gitmodules文件中，
+pylib库的克隆方式是url=git@github.com:dengdan/pylib.git,那么这时候要将url改成https://github.com/dengdan/pylib.git(即仍然使用https方式克隆)，之后在pixel_link目录下依次执行git submodule sync和git submodule update pylib即可完整克隆缺失的pylib库
