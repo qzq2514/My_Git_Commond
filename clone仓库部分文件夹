@@ -1,0 +1,11 @@
+clone仓库部分文件夹：
+
+mkdir gitSparse
+cd gitSparse/
+git init
+git remote add -f origin https://github.com/qzq2514/TaggingTool.git   //指定远程仓库
+ls
+git config core.sparsecheckout true             //指定克隆模式: 稀疏克隆模式
+echo "V4_LabelToolWithProjection" >> .git/info/sparse-checkout  指定克隆的文件夹(或者文件)
+cat ./.git/info/sparse-checkout                //查看被添加到稀疏克隆模式中的文件和文件夹
+git pull origin  master                        //拉取远程文件
