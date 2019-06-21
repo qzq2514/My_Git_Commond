@@ -1,0 +1,5 @@
+通过git stash将工作区恢复到上次提交的内容，同时备份本地所做的修改，之后就可以正常git pull了，  
+git pull完成后，执行git stash pop将之前本地做的修改应用到当前工作区。
+git stash
+git pull origin master
+git stash pop
